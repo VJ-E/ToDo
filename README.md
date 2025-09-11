@@ -58,14 +58,3 @@ The `Todo` class contains the following properties:
 - `created_at`: Timestamp when the task was created
 - `updated_at`: Timestamp when the task was last updated
 
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Author
-
-[Your Name] - Initial work
