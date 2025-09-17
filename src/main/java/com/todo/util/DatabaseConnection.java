@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+
 import io.github.cdimascio.dotenv.Dotenv;
 
 
@@ -18,10 +19,13 @@ public class DatabaseConnection {
         }
         catch(ClassNotFoundException e){
             System.out.println("JDBC Driver is missing");
+            System.exit(1);
         }
     }
 
     public Connection getDBConnection() throws SQLException{
             return DriverManager.getConnection(URL, USERNAME, PASSWORD);
     }
+
+
 }
