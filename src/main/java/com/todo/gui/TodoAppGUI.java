@@ -66,7 +66,7 @@ public class TodoAppGUI extends JFrame {
         String[] filterOptions = {"All", "Completed", "Pending"};
         filterComboBox = new JComboBox<>(filterOptions);
         filterComboBox.addActionListener(e -> {
-            // filterTodos();
+            filterTodos();
         });
     }
     private void setupLayout(){
@@ -106,9 +106,7 @@ public class TodoAppGUI extends JFrame {
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         filterPanel.add(new JLabel("Filter:"));
         filterPanel.add(filterComboBox);
-        
-        // add(inputPanel,BorderLayout.NORTH);
-        
+                
         JPanel northPanel = new JPanel(new BorderLayout());
         northPanel.add(inputPanel,BorderLayout.CENTER);
         northPanel.add(filterPanel,BorderLayout.NORTH);
@@ -128,6 +126,7 @@ public class TodoAppGUI extends JFrame {
         updateButton.addActionListener((e) -> {updateTodo();});
         deleteButton.addActionListener((e) -> {deleteTodo();});
         refreshButton.addActionListener((e) -> {refreshTodo();});
+        filterComboBox.addActionListener((e) -> {filterTodos();});
 
     }
 
@@ -205,6 +204,9 @@ public class TodoAppGUI extends JFrame {
         try{
             if(todoDAO.deleteTodo(id)){
                 JOptionPane.showMessageDialog(this, "Todo deleted successfully","Delete Success",JOptionPane.INFORMATION_MESSAGE);
+                titleField.setText("");
+                descriptionArea.setText("");
+                completedCheckBox.setSelected(false);
                 loadTodos();
             }
             else{
@@ -216,7 +218,11 @@ public class TodoAppGUI extends JFrame {
         }
     }
     private void refreshTodo(){
-
+        loadTodos();
+        titleField.setText("");
+        descriptionArea.setText("");
+        completedCheckBox.setSelected(false);
+        JOptionPane.showMessageDialog(this, "Successfully Refreshed","Success",JOptionPane.INFORMATION_MESSAGE);
     }
 
 
@@ -259,6 +265,22 @@ public class TodoAppGUI extends JFrame {
             completedCheckBox.setSelected(completed);
         }
 
+    }
+
+    private void filterTodos(){
+        String filter = (String)filterComboBox.getSelectedItem();
+        if(filter.equals("All")){
+            loadTodos();
+            return;
+        }
+
+        try{
+            List<Todo> todos = todoDAO.getTodosByFilter(filter);
+            updateTable(todos);
+        }
+        catch(SQLException e){
+            JOptionPane.showMessageDialog(this,"Failed To Filter","Filter Error",JOptionPane.ERROR_MESSAGE);
+        }
     }
     
 }
