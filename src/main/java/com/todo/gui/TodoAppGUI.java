@@ -222,6 +222,7 @@ public class TodoAppGUI extends JFrame {
         titleField.setText("");
         descriptionArea.setText("");
         completedCheckBox.setSelected(false);
+        filterComboBox.setSelectedIndex(0);;
         JOptionPane.showMessageDialog(this, "Successfully Refreshed","Success",JOptionPane.INFORMATION_MESSAGE);
     }
 
