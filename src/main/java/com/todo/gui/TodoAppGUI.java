@@ -137,7 +137,7 @@ public class TodoAppGUI extends JFrame {
         boolean completed = completedCheckBox.isSelected();
         
         if(title.isEmpty()){
-            JOptionPane.showMessageDialog(this,"Title is required","Error",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,"Title is required","Validation Error",JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -158,6 +158,41 @@ public class TodoAppGUI extends JFrame {
     }
 
     private void updateTodo(){
+        int row = todoTable.getSelectedRow();
+        if(row == -1){
+            JOptionPane.showMessageDialog(this, "Please select a a row to update","Validation Error",JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String title = titleField.getText().trim();
+        if(title.isEmpty()){
+            JOptionPane.showMessageDialog(this,"Please enter a title","Validation Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int id = (int)todoTable.getValueAt(row,0);
+        String description = descriptionArea.getText().trim();
+        try{
+            Todo todo = todoDAO.getTodoById(id);
+            
+            if(todo != null){
+                todo.setTitle(title);
+                todo.setDescription(description);
+                todo.setCompleted(completedCheckBox.isSelected());
+
+                if(todoDAO.updateTodo(todo)){
+                    JOptionPane.showMessageDialog(this,"Todo updated Successfully","Success",JOptionPane.INFORMATION_MESSAGE);
+                    loadTodos();
+                }
+                else{
+                    JOptionPane.showMessageDialog(this,"Failed to update todo","Update Error",JOptionPane.ERROR_MESSAGE);
+                }
+            } 
+        }
+        catch(SQLException e){
+            JOptionPane.showMessageDialog(this,"Update Error :"+e.getMessage(),"Update Error",JOptionPane.ERROR_MESSAGE);
+        }
+
 
     }
     private void deleteTodo(){
@@ -206,7 +241,6 @@ public class TodoAppGUI extends JFrame {
             titleField.setText(title);
             descriptionArea.setText(description);
             completedCheckBox.setSelected(completed);
-
         }
 
     }
