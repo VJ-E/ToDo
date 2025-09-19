@@ -5,6 +5,7 @@ import javax.swing.table.DefaultTableModel;
 import com.todo.dao.TodoAppDAO;
 import com.todo.model.Todo;
 
+import java.time.LocalDateTime;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -49,7 +50,7 @@ public class TodoAppGUI extends JFrame {
         todoTable.getSelectionModel().addListSelectionListener(
             e -> {
                 if(!e.getValueIsAdjusting()){
-                    // loadSelectedTodo();
+                    loadSelectedTodo();
                 }
             }
         );
@@ -131,6 +132,28 @@ public class TodoAppGUI extends JFrame {
     }
 
     private void addTodo(){
+        String title = titleField.getText().trim();
+        String description = descriptionArea.getText().trim();
+        boolean completed = completedCheckBox.isSelected();
+        
+        if(title.isEmpty()){
+            JOptionPane.showMessageDialog(this,"Title is required","Error",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try{
+            Todo todo = new Todo(title,description);
+            todo.setCompleted(completed);
+            
+            todoDAO.createtodo(todo);
+
+            JOptionPane.showMessageDialog(this,"Todo Added Successfully","Success",JOptionPane.INFORMATION_MESSAGE);
+
+            loadTodos();
+        }
+        catch(SQLException e){
+            JOptionPane.showMessageDialog(this,"Error Adding todo :"+e.getMessage(),"Database Error",JOptionPane.ERROR_MESSAGE);
+        }
         
     }
 
@@ -173,5 +196,19 @@ public class TodoAppGUI extends JFrame {
         }
     }
 
+    private void loadSelectedTodo(){
+        int row = todoTable.getSelectedRow();
+        if (row != -1){
+            String title = tableModel.getValueAt(row,1).toString();
+            String description = tableModel.getValueAt(row,2).toString();
+            boolean completed = (boolean)tableModel.getValueAt(row, 3);
+
+            titleField.setText(title);
+            descriptionArea.setText(description);
+            completedCheckBox.setSelected(completed);
+
+        }
+
+    }
     
 }
